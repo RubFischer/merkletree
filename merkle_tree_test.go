@@ -51,8 +51,8 @@ func (t TestMD5Content) Equals(other Content) (bool, error) {
 	return t.x == other.(TestMD5Content).x, nil
 }
 
-func calHash(hash []byte, hashStrategy func() hash.Hash) ([]byte, error) {
-	h := hashStrategy()
+func calHash(hash []byte, HashStrategy func() hash.Hash) ([]byte, error) {
+	h := HashStrategy()
 	if _, err := h.Write(hash); err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func calHash(hash []byte, hashStrategy func() hash.Hash) ([]byte, error) {
 
 var table = []struct {
 	testCaseId          int
-	hashStrategy        func() hash.Hash
+	HashStrategy        func() hash.Hash
 	hashStrategyName    string
 	defaultHashStrategy bool
 	contents            []Content
@@ -71,7 +71,7 @@ var table = []struct {
 }{
 	{
 		testCaseId:          0,
-		hashStrategy:        sha256.New,
+		HashStrategy:        sha256.New,
 		hashStrategyName:    "sha256",
 		defaultHashStrategy: true,
 		contents: []Content{
@@ -93,7 +93,7 @@ var table = []struct {
 	},
 	{
 		testCaseId:          1,
-		hashStrategy:        sha256.New,
+		HashStrategy:        sha256.New,
 		hashStrategyName:    "sha256",
 		defaultHashStrategy: true,
 		contents: []Content{
@@ -112,7 +112,7 @@ var table = []struct {
 	},
 	{
 		testCaseId:          2,
-		hashStrategy:        sha256.New,
+		HashStrategy:        sha256.New,
 		hashStrategyName:    "sha256",
 		defaultHashStrategy: true,
 		contents: []Content{
@@ -137,7 +137,7 @@ var table = []struct {
 	},
 	{
 		testCaseId:          3,
-		hashStrategy:        sha256.New,
+		HashStrategy:        sha256.New,
 		hashStrategyName:    "sha256",
 		defaultHashStrategy: true,
 		contents: []Content{
@@ -171,7 +171,7 @@ var table = []struct {
 	},
 	{
 		testCaseId:          4,
-		hashStrategy:        sha256.New,
+		HashStrategy:        sha256.New,
 		hashStrategyName:    "sha256",
 		defaultHashStrategy: true,
 		contents: []Content{
@@ -208,7 +208,7 @@ var table = []struct {
 	},
 	{
 		testCaseId:          5,
-		hashStrategy:        md5.New,
+		HashStrategy:        md5.New,
 		hashStrategyName:    "md5",
 		defaultHashStrategy: false,
 		contents: []Content{
@@ -230,7 +230,7 @@ var table = []struct {
 	},
 	{
 		testCaseId:          6,
-		hashStrategy:        md5.New,
+		HashStrategy:        md5.New,
 		hashStrategyName:    "md5",
 		defaultHashStrategy: false,
 		contents: []Content{
@@ -249,7 +249,7 @@ var table = []struct {
 	},
 	{
 		testCaseId:          7,
-		hashStrategy:        md5.New,
+		HashStrategy:        md5.New,
 		hashStrategyName:    "md5",
 		defaultHashStrategy: false,
 		contents: []Content{
@@ -274,7 +274,7 @@ var table = []struct {
 	},
 	{
 		testCaseId:          8,
-		hashStrategy:        md5.New,
+		HashStrategy:        md5.New,
 		hashStrategyName:    "md5",
 		defaultHashStrategy: false,
 		contents: []Content{
@@ -308,7 +308,7 @@ var table = []struct {
 	},
 	{
 		testCaseId:          9,
-		hashStrategy:        md5.New,
+		HashStrategy:        md5.New,
 		hashStrategyName:    "md5",
 		defaultHashStrategy: false,
 		contents: []Content{
@@ -362,7 +362,7 @@ func TestNewTree(t *testing.T) {
 
 func TestNewTreeWithHashingStrategy(t *testing.T) {
 	for i := 0; i < len(table); i++ {
-		tree, err := NewTreeWithHashStrategy(table[i].contents, table[i].hashStrategy)
+		tree, err := NewTreeWithHashStrategy(table[i].contents, table[i].HashStrategy)
 		if err != nil {
 			t.Errorf("[case:%d] error: unexpected error: %v", table[i].testCaseId, err)
 		}
@@ -379,7 +379,7 @@ func TestMerkleTree_MerkleRoot(t *testing.T) {
 		if table[i].defaultHashStrategy {
 			tree, err = NewTree(table[i].contents)
 		} else {
-			tree, err = NewTreeWithHashStrategy(table[i].contents, table[i].hashStrategy)
+			tree, err = NewTreeWithHashStrategy(table[i].contents, table[i].HashStrategy)
 		}
 		if err != nil {
 			t.Errorf("[case:%d] error: unexpected error: %v", table[i].testCaseId, err)
@@ -397,7 +397,7 @@ func TestMerkleTree_RebuildTree(t *testing.T) {
 		if table[i].defaultHashStrategy {
 			tree, err = NewTree(table[i].contents)
 		} else {
-			tree, err = NewTreeWithHashStrategy(table[i].contents, table[i].hashStrategy)
+			tree, err = NewTreeWithHashStrategy(table[i].contents, table[i].HashStrategy)
 		}
 		if err != nil {
 			t.Errorf("[case:%d] error: unexpected error: %v", table[i].testCaseId, err)
@@ -422,7 +422,7 @@ func TestMerkleTree_RebuildTreeWith(t *testing.T) {
 		if table[i].defaultHashStrategy {
 			tree, err = NewTree(table[i].contents)
 		} else {
-			tree, err = NewTreeWithHashStrategy(table[i].contents, table[i].hashStrategy)
+			tree, err = NewTreeWithHashStrategy(table[i].contents, table[i].HashStrategy)
 		}
 		if err != nil {
 			t.Errorf("[case:%d] error: unexpected error: %v", table[i].testCaseId, err)
@@ -444,7 +444,7 @@ func TestMerkleTree_VerifyTree(t *testing.T) {
 		if table[i].defaultHashStrategy {
 			tree, err = NewTree(table[i].contents)
 		} else {
-			tree, err = NewTreeWithHashStrategy(table[i].contents, table[i].hashStrategy)
+			tree, err = NewTreeWithHashStrategy(table[i].contents, table[i].HashStrategy)
 		}
 		if err != nil {
 			t.Errorf("[case:%d] error: unexpected error: %v", table[i].testCaseId, err)
@@ -457,7 +457,7 @@ func TestMerkleTree_VerifyTree(t *testing.T) {
 			t.Errorf("[case:%d] error: expected tree to be valid", table[i].testCaseId)
 		}
 		tree.Root.Hash = []byte{1}
-		tree.merkleRoot = []byte{1}
+		tree.MerkleRootInternal = []byte{1}
 		v2, err := tree.VerifyTree()
 		if err != nil {
 			t.Fatal(err)
@@ -475,7 +475,7 @@ func TestMerkleTree_VerifyContent(t *testing.T) {
 		if table[i].defaultHashStrategy {
 			tree, err = NewTree(table[i].contents)
 		} else {
-			tree, err = NewTreeWithHashStrategy(table[i].contents, table[i].hashStrategy)
+			tree, err = NewTreeWithHashStrategy(table[i].contents, table[i].HashStrategy)
 		}
 		if err != nil {
 			t.Errorf("[case:%d] error: unexpected error: %v", table[i].testCaseId, err)
@@ -509,7 +509,7 @@ func TestMerkleTree_VerifyContent(t *testing.T) {
 		}
 		if len(table[i].contents) > 0 {
 			tree.Root.Hash = []byte{1}
-			tree.merkleRoot = []byte{1}
+			tree.MerkleRootInternal = []byte{1}
 			v, err := tree.VerifyContent(table[i].contents[0])
 			if err != nil {
 				t.Fatal(err)
@@ -538,7 +538,7 @@ func TestMerkleTree_String(t *testing.T) {
 		if table[i].defaultHashStrategy {
 			tree, err = NewTree(table[i].contents)
 		} else {
-			tree, err = NewTreeWithHashStrategy(table[i].contents, table[i].hashStrategy)
+			tree, err = NewTreeWithHashStrategy(table[i].contents, table[i].HashStrategy)
 		}
 		if err != nil {
 			t.Errorf("[case:%d] error: unexpected error: %v", table[i].testCaseId, err)
@@ -556,7 +556,7 @@ func TestMerkleTree_MerklePath(t *testing.T) {
 		if table[i].defaultHashStrategy {
 			tree, err = NewTree(table[i].contents)
 		} else {
-			tree, err = NewTreeWithHashStrategy(table[i].contents, table[i].hashStrategy)
+			tree, err = NewTreeWithHashStrategy(table[i].contents, table[i].HashStrategy)
 		}
 		if err != nil {
 			t.Errorf("[case:%d] error: unexpected error: %v", table[i].testCaseId, err)
@@ -578,7 +578,7 @@ func TestMerkleTree_MerklePath(t *testing.T) {
 				if _, err := h.Write(hash); err != nil {
 					t.Errorf("[case:%d] error: Write error: %v", table[i].testCaseId, err)
 				}
-				hash, err = calHash(hash, table[i].hashStrategy)
+				hash, err = calHash(hash, table[i].HashStrategy)
 				if err != nil {
 					t.Errorf("[case:%d] error: calHash error: %v", table[i].testCaseId, err)
 				}

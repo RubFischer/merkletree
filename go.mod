@@ -1,3 +1,3 @@
-module github.com/cbergoon/merkletree
+module github.com/RubFischer/merkletree
 
 go 1.12
