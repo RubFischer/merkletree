@@ -320,7 +320,7 @@ func (m *MerkleTree) PrepareForMarshalling() {
     m.HashStrategy = nil
     
     // We need to make the data structure noncyclical
-    DeleteParentLink(m.Root)
+    DeleteLinks(m.Root)
 }
 
 func (m *MerkleTree) RestoreAfterMarshalling() {
@@ -329,26 +329,28 @@ func (m *MerkleTree) RestoreAfterMarshalling() {
     m.HashStrategy = sha256.New
     
     // We need to restore the parent links that were deleted
-    RestoreParentLink(m.Root, nil)
+    RestoreLinks(m.Root, nil, m)
 }
 
 
-func DeleteParentLink(n *Node) {
+func DeleteLinks(n *Node) {
     n.Parent = nil
+    n.Tree = nil
     if n.Left != nil {
-        DeleteParentLink(n.Left)
+        DeleteLinks(n.Left)
     }
     if n.Right != nil {
-        DeleteParentLink(n.Right)
+        DeleteLinks(n.Right)
     }
 }
 
-func RestoreParentLink(n *Node, par *Node) {
+func RestoreLinks(n *Node, par *Node, mt *MerkleTree) {
     n.Parent = par
+    n.Tree = mt
     if n.Left != nil {
-        RestoreParentLink(n.Left, n)
+        RestoreLinks(n.Left, n, mt)
     }
     if n.Right != nil {
-        RestoreParentLink(n.Right, n)
+        RestoreLinks(n.Right, n, mt)
     }
 }
