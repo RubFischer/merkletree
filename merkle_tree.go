@@ -111,6 +111,7 @@ func NewTreeWithHashStrategy(cs []Content, hashStrategy func() hash.Hash) (*Merk
 	return t, nil
 }
 
+
 // GetMerklePath: Get Merkle path and indexes(left Leaf or right Leaf)
 func (m *MerkleTree) GetMerklePath(content Content) ([][]byte, []int64, error) {
 	for _, current := range m.Leafs {
@@ -139,6 +140,7 @@ func (m *MerkleTree) GetMerklePath(content Content) ([][]byte, []int64, error) {
 	}
 	return nil, nil, nil
 }
+
 
 //buildWithContent is a helper function that for a given set of Contents, generates a
 //corresponding tree and returns the root node, a list of Leaf nodes, and a possible error.
@@ -311,4 +313,42 @@ func (m *MerkleTree) String() string {
 		s += "\n"
 	}
 	return s
+}
+
+func (m *MerkleTree) PrepareForMarshalling() {
+    // Remove function value (often cant be marshalled)
+    m.HashStrategy = nil
+    
+    // We need to make the data structure noncyclical
+    DeleteParentLink(m.Root)
+}
+
+func (m *MerkleTree) RestoreAfterMarshalling() {
+    // Add hash strategy back
+    // NOTE: We assume sha256!!!
+    m.HashStrategy = sha256.New
+    
+    // We need to restore the parent links that were deleted
+    RestoreParentLink(m.Root, nil)
+}
+
+
+func DeleteParentLink(n *Node) {
+    n.Parent = nil
+    if n.Left != nil {
+        DeleteParentLink(n.Left)
+    }
+    if n.Right != nil {
+        DeleteParentLink(n.Right)
+    }
+}
+
+func RestoreParentLink(n *Node, par *Node) {
+    n.Parent = par
+    if n.Left != nil {
+        RestoreParentLink(n.Left, n)
+    }
+    if n.Right != nil {
+        RestoreParentLink(n.Right, n)
+    }
 }

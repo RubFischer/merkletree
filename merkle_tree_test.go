@@ -589,3 +589,4 @@ func TestMerkleTree_MerklePath(t *testing.T) {
 		}
 	}
 }
+
